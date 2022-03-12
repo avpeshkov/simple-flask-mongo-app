@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block body %}
+<br>
+Hey this is list of urls you can try in this api:<br><br>
+<a href="{{ url_for('get_songs') }}">List of songs</a><br><br>
+
+<a href="{{ url_for('get_songs', page=2) }}">List of songs with custom pagination(page=2)</a><br><br>
+
+<a href="{{ url_for('get_songs', message='Fingers') }}">List of songs with search by title or
+    artist(message='Fingers')</a><br><br>
+
+<a href="{{ url_for('get_average_difficulty') }}">Get average difficulty for all song</a><br><br>
+
+<a href="{{ url_for('get_average_difficulty', level=9) }}">Get average difficulty for level 9 song</a><br><br>
+
+<a href="{{ url_for('get_average_min_max_rating') }}">Get average, min and max rating</a><br><br>
+
+Simple form to get average, min and max rating for list of ids
+<form action="{{ url_for('get_average_min_max_rating') }}" method="post">
+     <input type="text" id="id_list" name="id_list" title="list of ids, separated by comma"><br>
+     <input type="submit" value="Submit">
+</form>
+<br>
+
+Simple form to update rating:
+<form action="{{ url_for('get_songs') }}" method="post">
+    <label for="song_id">Song id:</label><br>
+    <input type="text" id="song_id" name="song_id"><br>
+
+    <label>Rating</label><br>
+    <input type="radio" id="1" name="rating" value="1">
+    <label for="1">1</label><br>
+    <input type="radio" id="2" name="rating" value="2">
+    <label for="2">2</label><br>
+    <input type="radio" id="3" name="rating" value="3">
+    <label for="3">3</label><br>
+    <input type="radio" id="4" name="rating" value="4">
+    <label for="4">4</label><br>
+    <input type="radio" id="5" name="rating" value="5">
+    <label for="5">5</label><br>
+
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}
