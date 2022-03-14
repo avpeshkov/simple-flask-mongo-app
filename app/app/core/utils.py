@@ -2,11 +2,13 @@ import json
 
 from pymongo import MongoClient
 
+from ..core.settings import MONGO_DB, MONGO_HOST, MONGO_PORT
+
 
 def initial_data_import():
-    client = MongoClient('mongodb', 27017)
-    if 'music_db' not in client.list_database_names():
-        db = client['music_db']
+    client = MongoClient(MONGO_HOST, MONGO_PORT)
+    if MONGO_DB not in client.list_database_names():
+        db = client[MONGO_DB]
         collection_song = db['song']
 
         with open('./songs.json') as f:

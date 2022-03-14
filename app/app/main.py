@@ -1,6 +1,7 @@
 
 from flask import Flask
 
+from .core.settings import MONGO_DB, MONGO_HOST, MONGO_PORT
 from .models.song import db
 from .core.utils import initial_data_import
 
@@ -13,9 +14,9 @@ from .api import *
 initial_data_import()
 
 app.config['MONGODB_SETTINGS'] = {
-    'db': 'music_db',
-    'host': 'mongodb',
-    'port': 27017
+    'db': MONGO_DB,
+    'host': MONGO_HOST,
+    'port': MONGO_PORT
 }
 
 db.init_app(app)

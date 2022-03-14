@@ -11,10 +11,11 @@ class Song(db.Document):
     released = db.DateTimeField()
     rating = db.IntField()
     meta = {
-        'index_background': True,
-        'auto_create_index': True,
+        "auto_create_index": False,
+        "index_background": True,
         'indexes': [
             '$title',  # text index
             '$artist',  # text index
+            'level',
         ]
     }

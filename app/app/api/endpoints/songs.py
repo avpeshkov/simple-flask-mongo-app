@@ -25,7 +25,7 @@ def get_songs():
     else:
         return jsonify({'page': page_num,
                         'total_objects': songs_len,
-                        'songs': [s.to_json() for s in songs.items]})
+                        'songs': [s.to_json() for s in songs.items]}), 200
 
 
 @app.route('/songs/', methods=['POST'])
@@ -35,11 +35,11 @@ def update_song():
 
     song = Song.objects(pk=song_id).first()
     if not song:
-        return jsonify({'error': 'data not found'})
+        return jsonify({'error': 'data not found'}), 500
     else:
         song.update(rating=rating)
         song.reload()
-    return jsonify(song.to_json())
+    return jsonify(song.to_json()), 200
 
 
 @app.route('/songs/average_difficulty/', methods=['GET'])
@@ -48,10 +48,10 @@ def get_average_difficulty():
     if level := flask.request.args.get("level") or None:
         query = query(level=int(level))
 
-    return jsonify({'total': query.count(), "average_difficulty": round(query.average('difficulty'), 2)})
+    return jsonify({'total': query.count(), "average_difficulty": round(query.average('difficulty'), 2)}), 200
 
 
-@app.route('/songs/average_rating/', methods=['GET','POST'])
+@app.route('/songs/average_rating/', methods=['GET', 'POST'])
 def get_average_min_max_rating():
     query = Song.objects
     if request.method == 'POST':
@@ -61,8 +61,7 @@ def get_average_min_max_rating():
 
     query.filter(rating__exists=True)
     if not query:
-        return {'error': "Not song with rating"}
-
+        return {'error': "Not song with rating"}, 500
 
     pipeline = [
         {"$group": {
@@ -72,15 +71,14 @@ def get_average_min_max_rating():
             "avg": {"$avg": "$rating"}
         }}
     ]
-    pprint('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++', stream=sys.stderr)
-    pprint(list(query().aggregate(pipeline)), stream=sys.stderr)
 
-    data = list(query().aggregate(pipeline))[0]
+    if data_list := list(query().aggregate(pipeline)):
+        data = data_list.pop()
 
-    return jsonify({'total': query.count(),
-                    "average_rating": round(data['avg'], 2),
-                    "min_rating": round(data['min'], 2),
-                    "max_rating": round(data['max'], 2),
-                    })
-
-
+        return jsonify({'total': query.count(),
+                        "average_rating": round(data['avg'], 2),
+                        "min_rating": round(data['min'], 2),
+                        "max_rating": round(data['max'], 2),
+                        }), 200
+    else:
+        return {'error': "Fail to calculate data"}, 500
